@@ -7,7 +7,7 @@ import (
 )
 
 func ApiRouter(routerGroup fiber.Router) {
-	routerGroup.Get("/", func(c *fiber.Ctx) error {
+	routerGroup.Get("/directory", func(c *fiber.Ctx) error {
 		return api.GetDirectory(c)
 	})
 }

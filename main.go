@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/jet/v2"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -35,6 +36,9 @@ func main() {
 	})
 	app.Static("/public", "./public")
 	app.Static("/image", "./image")
+
+	app.Use(cors.New(cors.Config{AllowOrigins: "http://localhost:8080",
+		AllowMethods: "POST"}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{

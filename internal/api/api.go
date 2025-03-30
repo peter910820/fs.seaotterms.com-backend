@@ -27,7 +27,7 @@ func GetDirectory(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"msg": fileName,
 	})
 }
