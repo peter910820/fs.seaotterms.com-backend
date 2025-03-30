@@ -9,9 +9,11 @@ import (
 	"github.com/gofiber/template/jet/v2"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
+
+	"fs.seaotterms.com-backend/internal/router"
 )
 
-func main() {
+func init() {
 	os.MkdirAll("./image", os.ModePerm)
 	err := godotenv.Load()
 	if err != nil {
@@ -23,6 +25,9 @@ func main() {
 		FullTimestamp: true,
 	})
 	logrus.SetLevel(logrus.DebugLevel)
+}
+
+func main() {
 	// Create a new engine
 	engine := jet.New("./views", ".jet")
 	app := fiber.New(fiber.Config{
@@ -36,6 +41,11 @@ func main() {
 			"Title": "資源伺服器目錄",
 		}, "layouts/base")
 	})
+
+	// route group
+	apiGroup := app.Group("/api") // main api route group
+	// register router
+	router.ApiRouter(apiGroup) // check identity for front-end routes
 
 	app.Get("/folder", func(c *fiber.Ctx) error {
 		dir := "./image"
