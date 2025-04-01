@@ -24,4 +24,7 @@ go.work.sum
 # env file
 .env
 
-/image/
+# front-end static file
+/dist/
+# resource dir
+/resource/

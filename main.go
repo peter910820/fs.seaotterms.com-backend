@@ -14,8 +14,14 @@ import (
 	"fs.seaotterms.com-backend/internal/router"
 )
 
+var (
+	frontendFolder string = "./dist"
+)
+
 func init() {
-	os.MkdirAll("./image", os.ModePerm)
+	os.MkdirAll("./resource", os.ModePerm)
+	os.MkdirAll("./resource/image", os.ModePerm)
+	os.MkdirAll("./resource/test", os.ModePerm)
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Fatal(err)
@@ -35,16 +41,13 @@ func main() {
 		Views: engine,
 	})
 	app.Static("/public", "./public")
-	app.Static("/image", "./image")
+	app.Static("/resource", "./resource")
 
 	app.Use(cors.New(cors.Config{AllowOrigins: "http://localhost:8080",
 		AllowMethods: "POST"}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{
-			"Title": "資源伺服器目錄",
-		}, "layouts/base")
-	})
+	// static folder
+	app.Static("/", frontendFolder)
 
 	// route group
 	apiGroup := app.Group("/api") // main api route group
@@ -52,7 +55,7 @@ func main() {
 	router.ApiRouter(apiGroup) // check identity for front-end routes
 
 	app.Get("/folder", func(c *fiber.Ctx) error {
-		dir := "./image"
+		dir := "./resource"
 		fileName := []string{}
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -77,17 +80,10 @@ func main() {
 		return c.Render("textEditor", nil, "layouts/base")
 	})
 
-	app.Post("/api/upload", func(c *fiber.Ctx) error {
-		file, err := c.FormFile("file")
-		if err != nil {
-			logrus.Error(err)
-			return c.Status(fiber.StatusBadRequest).SendString("uploaded failed")
-		}
-		err = c.SaveFile(file, fmt.Sprintf("./image/%s", file.Filename))
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString("save file failed")
-		}
-		return c.Status(fiber.StatusOK).SendString("save file successful!")
+	/* --------------------------------- */
+	// match all routes
+	app.Get("*", func(c *fiber.Ctx) error {
+		return c.SendFile(frontendFolder + "/index.html")
 	})
 
 	logrus.Fatal(app.Listen(fmt.Sprintf(":%s", os.Getenv("PORT"))))
