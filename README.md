@@ -1,2 +1,2 @@
-# peter910820-file-resource-server
+# fs.seaotterms.com-backend
 Self-use resource server.
