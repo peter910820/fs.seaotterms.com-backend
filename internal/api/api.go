@@ -12,14 +12,14 @@ import (
 
 func GetDirectory(c *fiber.Ctx) error {
 	dir := "./resource"
-	var fileName []string
+	var dirName []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			logrus.Error(err)
 			return err
 		}
 		if info.IsDir() {
-			fileName = append(fileName, path)
+			dirName = append(dirName, path)
 		}
 		return nil
 	})
@@ -30,7 +30,7 @@ func GetDirectory(c *fiber.Ctx) error {
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"msg": fileName,
+		"data": dirName,
 	})
 }
 
@@ -53,6 +53,7 @@ func GetFile(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
+	logrus.Debugf("%v", fileName)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": fileName,
 	})
