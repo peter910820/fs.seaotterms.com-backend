@@ -3,11 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/template/jet/v2"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 
@@ -35,11 +33,7 @@ func init() {
 }
 
 func main() {
-	// Create a new engine
-	engine := jet.New("./views", ".jet")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+	app := fiber.New()
 	app.Static("/public", "./public")
 	app.Static("/resource", "./resource")
 
@@ -51,34 +45,8 @@ func main() {
 
 	// route group
 	apiGroup := app.Group("/api") // main api route group
-	// register router
-	router.ApiRouter(apiGroup) // check identity for front-end routes
-
-	app.Get("/folder", func(c *fiber.Ctx) error {
-		dir := "./resource"
-		fileName := []string{}
-		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				logrus.Error(err)
-				return err
-			}
-			if !info.IsDir() {
-				fileName = append(fileName, path)
-			}
-			return nil
-		})
-		if err != nil {
-			logrus.Error(err)
-			return c.Status(fiber.StatusInternalServerError).SendString("server has an error")
-		}
-		return c.Render("folder", fiber.Map{
-			"FileName": fileName,
-		}, "layouts/base")
-	})
-
-	app.Get("/text-editor", func(c *fiber.Ctx) error {
-		return c.Render("textEditor", nil, "layouts/base")
-	})
+	// api router
+	router.ApiRouter(apiGroup)
 
 	/* --------------------------------- */
 	// match all routes
