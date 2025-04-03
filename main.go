@@ -34,7 +34,6 @@ func init() {
 
 func main() {
 	app := fiber.New()
-	app.Static("/public", "./public")
 	app.Static("/resource", "./resource")
 
 	app.Use(cors.New(cors.Config{AllowOrigins: "http://localhost:8080",
