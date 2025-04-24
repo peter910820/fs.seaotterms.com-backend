@@ -66,6 +66,7 @@ func main() {
 	apiGroup := app.Group("/api") // main api route group
 	// api router
 	router.ApiRouter(apiGroup)
+	router.LoginRouter(apiGroup, store, dbs)
 
 	/* --------------------------------- */
 	// match all routes
