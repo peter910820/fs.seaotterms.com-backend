@@ -19,7 +19,7 @@ import (
 var (
 	// init store(session)
 	store = session.New(session.Config{
-		Expiration: 7 * 24 * time.Hour,
+		Expiration: 12 * time.Hour,
 		// CookieHTTPOnly: true,
 	})
 	// management database connect
