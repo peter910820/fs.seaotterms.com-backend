@@ -3,16 +3,28 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
+	"fs.seaotterms.com-backend/internal/config"
 	"fs.seaotterms.com-backend/internal/router"
 )
 
 var (
+	// init store(session)
+	store = session.New(session.Config{
+		Expiration: 7 * 24 * time.Hour,
+		// CookieHTTPOnly: true,
+	})
+	// management database connect
+	dbs = make(map[string]*gorm.DB)
+	// set frontendFolder
 	frontendFolder string = "./dist"
 )
 
@@ -33,6 +45,10 @@ func init() {
 }
 
 func main() {
+	// init dsn
+	dbName, db := config.InitDsn()
+	dbs[dbName] = db
+
 	app := fiber.New(
 		fiber.Config{
 			BodyLimit: 20 * 1024 * 1024, // 20MB
