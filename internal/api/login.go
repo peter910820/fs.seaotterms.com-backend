@@ -40,7 +40,7 @@ func Login(c *fiber.Ctx, store *session.Store, db *gorm.DB) error {
 			err := bcrypt.CompareHashAndPassword([]byte(col.Password), []byte(data.Password))
 			if err != nil {
 				logrus.Error("login error, password not correct")
-				response.Message = r.Error.Error()
+				response.Message = err.Error()
 				return c.Status(fiber.StatusUnauthorized).JSON(response)
 			}
 			// set session
