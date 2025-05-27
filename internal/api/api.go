@@ -55,7 +55,6 @@ func GetFiles(c *fiber.Ctx) error {
 				"msg": err.Error(),
 			})
 		}
-		logrus.Debugf("%v", fileName)
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"data": fileName,
 		})
@@ -77,7 +76,6 @@ func UploadFile(c *fiber.Ctx) error {
 		})
 	}
 	logrus.Info(fmt.Sprintf("%s 上傳成功，大小為 %d Bytes", file.Filename, file.Size))
-	logrus.Debug(file.Header["Content-Type"])
 	// 20MB upper limit
 	if file.Size > 20971520 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
