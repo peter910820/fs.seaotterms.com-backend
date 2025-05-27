@@ -2,8 +2,8 @@ package utils
 
 import "fs.seaotterms.com-backend/internal/dto"
 
-func InitResponse() dto.CommonResponse {
-	return dto.CommonResponse{
+func InitResponse() dto.Response {
+	return dto.Response{
 		Message: "",
 		Data:    nil,
 	}
