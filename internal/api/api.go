@@ -36,34 +36,31 @@ func GetDirectory(c *fiber.Ctx) error {
 
 func GetFiles(c *fiber.Ctx) error {
 	folder := c.Query("folder")
-	if folder == "" {
-		dir := "./resource"
-		fileName := []string{}
-		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				logrus.Error(err)
-				return err
-			}
-			if !info.IsDir() {
-				fileName = append(fileName, path)
-			}
-			return nil
-		})
+	dir := "./resource"
+	fileName := []string{}
+
+	if folder != "" {
+		dir = "./resource/" + strings.TrimSpace(folder)
+	}
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			logrus.Error(err)
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"msg": err.Error(),
-			})
+			return err
 		}
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"data": fileName,
-		})
-	} else {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"data": "",
+		if !info.IsDir() {
+			fileName = append(fileName, path)
+		}
+		return nil
+	})
+	if err != nil {
+		logrus.Error(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
 		})
 	}
-
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": fileName,
+	})
 }
 
 func UploadFile(c *fiber.Ctx) error {
