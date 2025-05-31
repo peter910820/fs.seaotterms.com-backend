@@ -28,3 +28,5 @@ go.work.sum
 /dist/
 # resource dir
 /resource/
+# mac
+.DS_Store
